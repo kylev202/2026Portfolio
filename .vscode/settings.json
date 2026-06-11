@@ -1,0 +1,21 @@
+{
+  // Keep dotfiles — especially the project .claude folder — visible in the
+  // Explorer. Windows doesn't hide dot-prefixed folders via a file attribute,
+  // but VS Code can; these settings make sure it doesn't.
+  "files.exclude": {
+    "**/.claude": false,
+    "**/.vscode": false
+  },
+  "explorer.excludeGitIgnore": false,
+
+  // globals.css uses Tailwind at-rules (@tailwind, @apply, @layer) and the
+  // theme() function. VS Code's built-in CSS validator doesn't understand them
+  // and reports false "Unknown at rule" / property-value errors. The real
+  // validator is the build (PostCSS + Tailwind), which passes clean — so we
+  // turn the built-in validator off and let Tailwind CSS IntelliSense
+  // (recommended in extensions.json) provide proper Tailwind-aware diagnostics.
+  "css.lint.unknownAtRules": "ignore",
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false
+}

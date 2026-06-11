@@ -1,0 +1,6 @@
+{
+  // Tailwind CSS IntelliSense replaces the built-in CSS validator (disabled in
+  // settings.json) with Tailwind-aware diagnostics, autocomplete for class
+  // names, and hover previews — so globals.css stops showing false errors.
+  "recommendations": ["bradlc.vscode-tailwindcss"]
+}

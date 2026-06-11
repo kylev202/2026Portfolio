@@ -1,0 +1,515 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    color-scheme: dark;
+    /* Firefox scrollbar — match the WebKit styling below. */
+    scrollbar-width: thin;
+    scrollbar-color: theme("colors.line.DEFAULT") theme("colors.bg.DEFAULT");
+  }
+
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    overflow-x: hidden;
+    font-feature-settings: "kern", "liga", "calt", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-signal/25 text-ink;
+  }
+
+  /* Amber keyboard focus ring — fits the instrument, always visible. */
+  :where(a, button, [tabindex], input, summary):focus-visible {
+    outline: 2px solid theme("colors.signal.DEFAULT");
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Section headings use the proportional grotesk; identity headline opts into mono. */
+  h2,
+  h3 {
+    @apply font-sans font-bold;
+    /* Compatibility fallback for heading wrapping behavior. */
+    overflow-wrap: anywhere;
+    /* Even line lengths on multi-line headings; ignored where unsupported. */
+    text-wrap: balance;
+  }
+
+  p {
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Slim instrument scrollbar. */
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-bg;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-line rounded-full;
+    border: 3px solid theme("colors.bg.DEFAULT");
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-line-strong;
+  }
+}
+
+@layer components {
+  /* ── Skip link — first tab stop; slides in only when focused ──────────── */
+  .skip-link {
+    @apply fixed left-4 top-4 z-toast -translate-y-24 rounded-md border border-signal/60 bg-bg px-4 py-2 font-mono text-xs uppercase tracking-label text-signal transition-transform duration-200 focus-visible:translate-y-0;
+  }
+
+  /* ── Labels / readouts (mono, tracked) ────────────────────────────────── */
+  .label {
+    @apply font-mono text-[0.72rem] uppercase tracking-label text-ink-faint;
+  }
+  .readout {
+    @apply font-mono text-xs tabular-nums text-ink-dim;
+  }
+
+  /* ── Window / panel chrome ────────────────────────────────────────────── */
+  .window {
+    @apply relative rounded-xl border border-line bg-surface/70 backdrop-blur-[2px];
+    box-shadow:
+      0 1px 0 0 theme("colors.line.strong") inset,
+      0 24px 60px -32px rgb(0 0 0 / 0.8);
+    transition:
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 240ms ease;
+  }
+  .window:hover {
+    transform: translateY(-2px);
+    border-color: theme("colors.line.strong");
+    box-shadow:
+      0 1px 0 0 theme("colors.line.strong") inset,
+      0 30px 74px -34px rgb(0 0 0 / 0.9);
+  }
+  .window-bar {
+    @apply flex items-center gap-3 border-b border-line px-4 py-2.5;
+  }
+  /* The three minimal window dots — outlined, not glossy. */
+  .window-dots {
+    @apply flex items-center gap-1.5;
+  }
+  .window-dots > span {
+    @apply h-2.5 w-2.5 rounded-full border border-line-strong;
+  }
+
+  /* ── Links ────────────────────────────────────────────────────────────── */
+  /* Underline that grows from the left on hover/focus. */
+  .link-underline {
+    @apply relative inline-flex items-center transition-colors duration-200;
+  }
+  .link-underline::after {
+    content: "";
+    @apply absolute -bottom-0.5 left-0 h-px w-full origin-right scale-x-0 bg-current transition-transform duration-300 ease-out;
+  }
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    @apply origin-left scale-x-100;
+  }
+
+  /* Primary action — amber hairline that fills on hover. */
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-md border border-signal/60 px-4 py-2 font-mono text-xs uppercase tracking-label text-signal transition-colors duration-200 hover:bg-signal/10 hover:text-signal focus-visible:bg-signal/10;
+    transition:
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px -16px rgb(244 168 58 / 0.45);
+  }
+  .btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 font-mono text-xs uppercase tracking-label text-ink-dim transition-colors duration-200 hover:border-line-strong hover:text-ink;
+    transition:
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 200ms ease,
+      color 200ms ease,
+      background-color 200ms ease;
+  }
+  .btn-ghost:hover {
+    transform: translateY(-1px);
+    background: rgb(255 255 255 / 0.02);
+  }
+  .btn-ghost:active {
+    transform: translateY(0) scale(0.985);
+  }
+
+  /* Skill / tag chip. */
+  .chip {
+    @apply inline-flex items-center rounded border border-line px-2 py-0.5 font-mono text-[0.7rem] text-ink-dim;
+  }
+
+  /* The ⌘K key hint glyph. */
+  .kbd {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded border border-line-strong bg-surface-raised px-1 font-mono text-[0.68rem] text-ink-dim;
+  }
+
+  /* ── Desktop window controls (functional traffic-light dots) ────────────── */
+  /* The button is a generous (20px) hit target for touch; the visible dot is a
+     small 12px face inside it. Outlined by default; the glyph (× − ▢) appears on
+     hover/focus. Monochrome to honour the single-accent rule — amber is reserved
+     for active state. */
+  .win-dot {
+    @apply grid h-5 w-5 place-items-center rounded text-transparent transition-colors;
+  }
+  .win-dot-face {
+    @apply grid h-3 w-3 place-items-center rounded-full border border-line-strong
+      font-mono text-[7px] leading-none transition-colors;
+  }
+  .win-dot:hover .win-dot-face,
+  .win-dot:focus-visible .win-dot-face {
+    @apply border-ink-faint text-ink;
+  }
+
+  /* Window resize grip (bottom-right). Coarse pointers enlarge it (see below). */
+  .win-resize {
+    @apply absolute bottom-0 right-0 grid h-4 w-4 cursor-nwse-resize touch-none place-items-end;
+  }
+
+  /* ── Expandable "process" rows (the work list) ────────────────────────── */
+  summary.proc {
+    list-style: none;
+    cursor: pointer;
+    transition:
+      background-color 220ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  summary.proc:hover,
+  summary.proc:focus-visible {
+    background: rgb(255 255 255 / 0.02);
+    transform: translateX(4px);
+  }
+  summary.proc::-webkit-details-marker {
+    display: none;
+  }
+  .proc-marker {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  details[open] .proc-marker {
+    transform: rotate(45deg);
+  }
+  /* Smooth height reveal via grid-rows; collapses cleanly without JS. */
+  .proc-detail {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  details[open] .proc-detail {
+    grid-template-rows: 1fr;
+  }
+  .proc-detail > div {
+    overflow: hidden;
+  }
+
+  /* ── Status LED — a small live light (Work status, Path "now" node) ─────── */
+  .led {
+    @apply relative inline-block h-2 w-2 shrink-0 rounded-full;
+  }
+  .led-live {
+    @apply bg-signal;
+    animation: led 3.2s ease-in-out infinite;
+  }
+  /* Statically lit — "on" without demanding attention. Lists should use this;
+     the few *pulsing* LEDs (availability, HEAD, uptime) keep their meaning. */
+  .led-on {
+    @apply bg-signal/80;
+  }
+  .led-idle {
+    @apply border border-line-strong bg-bg;
+  }
+
+  /* ── Capability matrix — interactive skill modules (About) ──────────────── */
+  /* Hovering one module focuses it and dims its siblings: a control panel. */
+  .module {
+    @apply relative inline-flex select-none items-center gap-1.5 rounded-md border border-line
+      bg-surface/40 px-2.5 py-1 font-mono text-[0.74rem] text-ink-dim
+      transition-all duration-200;
+  }
+  .module::before {
+    content: "";
+    @apply h-1 w-1 rounded-full bg-line-strong transition-colors duration-200;
+  }
+  .matrix:hover .module {
+    opacity: 0.42;
+  }
+  .matrix .module:hover {
+    opacity: 1;
+    @apply -translate-y-px border-signal/60 bg-signal/10 text-ink;
+  }
+  .matrix .module:hover::before {
+    @apply bg-signal;
+  }
+
+  /* ── HUD framing — corner brackets that mark a region without a full panel ─ */
+  .hud-frame {
+    @apply relative;
+  }
+  .hud-frame::before,
+  .hud-frame::after {
+    content: "";
+    @apply pointer-events-none absolute h-3 w-3 border-line-strong;
+  }
+  .hud-frame::before {
+    @apply -left-px -top-px border-l border-t;
+  }
+  .hud-frame::after {
+    @apply -bottom-px -right-px border-b border-r;
+  }
+
+  /* ── System bus — the moving telemetry ticker ───────────────────────────── */
+  .bus-track {
+    display: flex;
+    width: max-content;
+    flex-shrink: 0;
+    animation: marquee 60s linear infinite;
+  }
+  .bus:hover .bus-track {
+    animation-play-state: paused;
+  }
+
+  /* ── Command-bar group header — CSS-generated so no DOM node lives inside
+     role="listbox" and ARIA content model is satisfied. ─────────────────── */
+  .cmd-group::before {
+    content: attr(data-label);
+    @apply label block px-3 pb-1 pt-3;
+  }
+
+  /* ── Terminal (the uplink) ──────────────────────────────────────────────── */
+  .term-screen {
+    @apply font-mono text-[0.82rem] leading-relaxed;
+  }
+  .term-line {
+    @apply whitespace-pre-wrap break-words;
+  }
+}
+
+@layer utilities {
+  /* Fluid identity headline — mono, large, tight. The floor is set so the
+     longest headline line clears a 360px viewport in (wide) Martian Mono
+     without an awkward mid-word wrap. */
+  .text-display {
+    font-size: clamp(1.9rem, 7.5vw, 5.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .text-section {
+    font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  /* Faint film-grain — a tiled SVG fractal noise. */
+  .grain-layer {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+  }
+
+  /* Edge-darkening vignette to deepen the field. */
+  .vignette-layer {
+    background: radial-gradient(
+      ellipse at 50% 38%,
+      transparent 42%,
+      rgb(0 0 0 / 0.55) 100%
+    );
+  }
+
+  /* CRT scanlines — a faint horizontal raster for the boot console only. */
+  .scanlines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.035) 0 1px,
+      transparent 1px 3px
+    );
+  }
+
+  /* Faint blueprint dot-grid for the desktop backdrop. */
+  .grid-dots {
+    background-image: radial-gradient(
+      theme("colors.line.DEFAULT") 0.75px,
+      transparent 0.75px
+    );
+    background-size: 26px 26px;
+  }
+
+  /* Hairline-rules wallpaper variant (the Settings "Hairline rules" option). */
+  .wp-rules {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      theme("colors.line.DEFAULT") 0 1px,
+      transparent 1px 38px
+    );
+  }
+
+  /* Oversized ghosted number/word — fills the margins, sets a subsystem apart. */
+  .ghost-num {
+    font-family: theme("fontFamily.mono");
+    font-weight: 700;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px theme("colors.line.DEFAULT");
+  }
+
+  /* Fade both horizontal edges to transparent — masks a marquee's seams. */
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 7%,
+      #000 93%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 7%,
+      #000 93%,
+      transparent
+    );
+  }
+
+  /* Section eyebrow set as a machine path/address rather than a tracked label. */
+  .addr {
+    @apply font-mono text-xs text-ink-faint;
+  }
+
+  /* Horizontal padding that also clears side notches in landscape. Matches the
+     site's `px-4 sm:px-6` rhythm, taking the larger of the two. */
+  .px-safe {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  @media (min-width: 640px) {
+    .px-safe {
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
+    }
+  }
+
+  /* Hide a scroll affordance while keeping the element scrollable (mobile dock). */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Full-viewport height with a vh fallback for browsers without svh support.
+     svh = the *small* viewport, so a fixed UI never hides under mobile toolbars. */
+  .screen-h {
+    height: 100vh;
+    height: 100svh;
+  }
+  .min-screen-h {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+}
+
+/* ── Custom keyframes (kept here, not in the Tailwind config, so they resolve
+   without depending on JIT config reloads) ──────────────────────────────────*/
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes led {
+  0%,
+  100% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgb(244 168 58 / 0);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 5px 0 rgb(244 168 58 / 0.3);
+  }
+}
+
+/* CRT power-on: a brief brightness/clip swell as the console wakes. */
+@keyframes crt-on {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.6);
+    filter: brightness(2.4);
+  }
+  55% {
+    opacity: 1;
+    transform: scaleY(1);
+    filter: brightness(1.25);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+    filter: brightness(1);
+  }
+}
+.crt-on {
+  animation: crt-on 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Menu-bar activity equalizer — three bars breathing out of phase. */
+@keyframes eq {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── Touch / pointer adaptation ──────────────────────────────────────────────
+   Screen size doesn't imply input method, so size hit targets by pointer type.
+   Coarse pointers (touch, stylus) get comfortably larger controls; `.tap` marks
+   small chrome controls that should reach a ~44px target on touch. Kept outside
+   @layer so it reliably wins over the layered base sizes. */
+@media (pointer: coarse) {
+  .win-dot {
+    height: 1.75rem;
+    width: 1.75rem;
+  }
+  .win-resize {
+    height: 1.75rem;
+    width: 1.75rem;
+  }
+  .btn,
+  .btn-ghost,
+  .tap {
+    min-height: 2.75rem;
+  }
+}
