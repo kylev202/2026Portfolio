@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { profile, system } from "@/lib/content";
 
+export const dynamic = "force-static";
+
 /**
  * Generated Open Graph / Twitter card (1200×630). Next picks this up by file
  * convention and wires og:image + twitter:image automatically — no static asset
