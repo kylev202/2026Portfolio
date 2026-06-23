@@ -1,8 +1,10 @@
 "use client";
 
+import { useRef } from "react";
 import { m, useReducedMotion } from "framer-motion";
 import { timeline } from "@/lib/content";
 import { EASE } from "../primitives/anim";
+import { gsap, registerGsap, useGSAP } from "../primitives/gsap";
 import Reveal from "../primitives/Reveal";
 
 /**
@@ -12,6 +14,37 @@ import Reveal from "../primitives/Reveal";
  */
 export default function Path() {
   const reduced = useReducedMotion();
+
+  // The spine draws itself with scroll position (scrubbed), like a build log
+  // streaming in. No-JS and reduced-motion users get it fully drawn and static.
+  const spineWrapRef = useRef<HTMLDivElement>(null);
+  const spineRef = useRef<HTMLSpanElement>(null);
+
+  useGSAP(
+    () => {
+      registerGsap();
+      if (!spineRef.current) return;
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          spineRef.current,
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: spineWrapRef.current,
+              start: "top 80%",
+              end: "bottom 65%",
+              scrub: true,
+            },
+          },
+        );
+      });
+      return () => mm.revert();
+    },
+    { scope: spineWrapRef },
+  );
 
   return (
     <Reveal as="section" id="path" className="scroll-mt-24 py-8">
@@ -29,16 +62,13 @@ export default function Path() {
         How I got here
       </h2>
 
-      <div className="relative mt-10 ml-1 pl-9">
-        {/* The spine — draws downward as the section enters. */}
-        <m.span
+      <div ref={spineWrapRef} className="relative mt-10 ml-1 pl-9">
+        {/* The spine — scrubs downward in lock-step with scroll position. */}
+        <span
+          ref={spineRef}
           aria-hidden
           className="absolute left-0 top-1 w-px origin-top bg-line"
           style={{ height: "calc(100% - 0.5rem)" }}
-          initial={reduced ? false : { scaleY: 0 }}
-          whileInView={reduced ? undefined : { scaleY: 1 }}
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-          transition={reduced ? { duration: 0 } : { duration: 0.9, ease: EASE }}
         />
 
         <ol>

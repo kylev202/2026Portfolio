@@ -6,6 +6,8 @@ import { m, useReducedMotion } from "framer-motion";
 import { profile } from "@/lib/content";
 import { useCommandBar } from "./CommandBar";
 import { DUR, EASE } from "./primitives/anim";
+import Magnetic from "./primitives/Magnetic";
+import { gsap, registerGsap, useGSAP } from "./primitives/gsap";
 
 const HEADLINE = profile.headline;
 const HEADLINE_TEXT = HEADLINE.join("");
@@ -74,9 +76,38 @@ export default function Hero() {
 
   const heroTransition = reduced ? { duration: 0 } : { duration: DUR.base, ease: EASE };
 
+  // GSAP depth: the status window drifts gently upward as the hero scrolls away,
+  // reading as a nearer layer than the page behind it. Desktop + motion only, so
+  // touch / reduced-motion users keep a perfectly static hero.
+  const heroRef = useRef<HTMLElement>(null);
+  const asideRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      registerGsap();
+      if (!asideRef.current) return;
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        gsap.to(asideRef.current, {
+          yPercent: -14,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      });
+      return () => mm.revert();
+    },
+    { scope: heroRef },
+  );
+
   return (
     <section
       id="top"
+      ref={heroRef}
       className="min-screen-h relative flex items-center pb-16 pt-24"
     >
       <div className="grid w-full items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
@@ -129,10 +160,12 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={reduced ? heroTransition : { ...heroTransition, delay: 0.62 }}
           >
-            <Link href="/desktop" className="btn">
-              Enter desktop
-              <span aria-hidden>▸</span>
-            </Link>
+            <Magnetic>
+              <Link href="/desktop" className="btn">
+                Enter desktop
+                <span aria-hidden>▸</span>
+              </Link>
+            </Magnetic>
             <a href="#work" className="btn-ghost">
               Open work
               <span aria-hidden>↓</span>
@@ -144,9 +177,10 @@ export default function Hero() {
           </m.div>
         </div>
 
-        {/* Instrument readout */}
+        {/* Instrument readout — depth-drifts on scroll (lg only). */}
+        <div ref={asideRef} className="lg:max-w-sm lg:justify-self-end">
         <m.aside
-          className="window p-0 lg:justify-self-end lg:max-w-sm"
+          className="window p-0"
           aria-hidden
           initial={reduced ? false : { opacity: 0, y: 18, scale: 0.99 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -189,6 +223,7 @@ export default function Hero() {
             <span className="font-mono text-[0.7rem]">to navigate anywhere</span>
           </div>
         </m.aside>
+        </div>
       </div>
 
       {/* Descent cue — the invitation into the machine. */}

@@ -1,4 +1,8 @@
+"use client";
+
+import { useRef } from "react";
 import { projects } from "@/lib/content";
+import { gsap, registerGsap, useGSAP } from "../primitives/gsap";
 import Reveal from "../primitives/Reveal";
 
 const LIVE = new Set(["live", "shipped"]);
@@ -14,6 +18,39 @@ const isLink = (url?: string) => !!url && url !== "#";
  * into a two-column manifest.
  */
 export default function Work() {
+  // Each oversized ghost year drifts against the scroll, so the project list
+  // gains depth as it passes. Decorative only (sm+), and off under reduced motion.
+  const listRef = useRef<HTMLUListElement>(null);
+
+  useGSAP(
+    () => {
+      registerGsap();
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 640px) and (prefers-reduced-motion: no-preference)", () => {
+        listRef.current
+          ?.querySelectorAll<HTMLElement>(".ghost-num")
+          .forEach((el) => {
+            gsap.fromTo(
+              el,
+              { yPercent: -16 },
+              {
+                yPercent: 16,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: el,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: true,
+                },
+              },
+            );
+          });
+      });
+      return () => mm.revert();
+    },
+    { scope: listRef },
+  );
+
   return (
     <Reveal as="section" id="work" className="scroll-mt-24 py-8">
       <div className="flex items-center gap-3 border-b border-line pb-3">
@@ -33,7 +70,7 @@ export default function Work() {
         A few things I&apos;ve built. Expand a row for the detail, the stack, and the links.
       </p>
 
-      <ul className="mt-8 border-t border-line">
+      <ul ref={listRef} className="mt-8 border-t border-line">
         {projects.map((project, i) => {
           const live = project.status ? LIVE.has(project.status) : false;
           const hasDemo = isLink(project.demo);
