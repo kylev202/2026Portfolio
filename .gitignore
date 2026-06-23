@@ -21,3 +21,7 @@ yarn-error.log*
 *.pem
 *.tsbuildinfo
 next-env.d.ts
+
+# claude skills — auto-synced from skills-lock.json / local source (third-party,
+# machine-local). Kept out of this public repo. .claude/NOTES.md stays tracked.
+/.claude/skills/

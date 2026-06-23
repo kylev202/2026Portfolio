@@ -1,5 +1,12 @@
 # Portfolio — Progress Tracker
 
+> ⚠️ **STALE (as of 2026-06-24).** This file describes the abandoned pre-2026
+> vision (3D-driven site, Three.js/R3F, GSAP, built-in Anthropic chat) — all of
+> which were removed on 2026-05-30. It does **not** reflect the current "The
+> Runtime" direction. For current truth see [`CLAUDE.md`](CLAUDE.md) and the
+> working diary in [`.claude/NOTES.md`](.claude/NOTES.md). Refresh or retire
+> this tracker before relying on it.
+
 > Your personal dashboard. Update this as you build. Skim it any time to know
 > exactly where things stand, what you're on, and what's next.
 
