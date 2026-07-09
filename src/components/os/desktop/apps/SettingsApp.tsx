@@ -2,6 +2,7 @@
 
 import { profile, system } from "@/lib/content";
 import { useWindows, type Wallpaper } from "../WindowManager";
+import { useSound } from "../../primitives/sound";
 
 const WALLPAPERS: { id: Wallpaper; label: string; swatch: string }[] = [
   { id: "grid", label: "Blueprint grid", swatch: "grid-dots" },
@@ -42,6 +43,7 @@ function Toggle({
 /** Settings window — live desktop preferences (persisted to localStorage). */
 export default function SettingsApp() {
   const { settings, setSetting } = useWindows();
+  const sound = useSound();
 
   return (
     <div className="h-full overflow-y-auto px-5 py-5 sm:px-6">
@@ -86,6 +88,21 @@ export default function SettingsApp() {
           </span>
         </span>
         <Toggle on={settings.calm} onChange={(v) => setSetting("calm", v)} label="Calm mode" />
+      </label>
+
+      <p className="addr mt-7 uppercase tracking-label">sound</p>
+      {/* data-no-sfx: the switch voices its own on/off cue — no delegated click. */}
+      <label
+        data-no-sfx
+        className="mt-3 flex items-center justify-between gap-4 rounded-md border border-line px-3.5 py-3"
+      >
+        <span className="text-sm text-ink">
+          Interface sound
+          <span className="mt-0.5 block font-mono text-[0.7rem] text-ink-faint">
+            soft clicks on hover and press
+          </span>
+        </span>
+        <Toggle on={sound.enabled} onChange={() => sound.toggle()} label="Interface sound" />
       </label>
 
       <p className="addr mt-7 uppercase tracking-label">system</p>

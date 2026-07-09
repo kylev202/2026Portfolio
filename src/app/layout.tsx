@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import { profile, system } from "@/lib/content";
+import { SoundProvider } from "@/components/os/primitives/sound";
 
 // Mechanical mono — carries the "machine": chrome, labels, data, the headline.
 // (Variable font: full weight range available via font-weight utilities.)
@@ -50,7 +51,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${mono.variable} ${sans.variable}`}>
-      <body>{children}</body>
+      <body>
+        <SoundProvider>{children}</SoundProvider>
+      </body>
     </html>
   );
 }
