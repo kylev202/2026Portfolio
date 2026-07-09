@@ -107,6 +107,34 @@ _Append-only. Date each entry._
 ## Session diary
 _Newest entries on top. Format: `### YYYY-MM-DD — summary`._
 
+### 2026-07-09 — Interface sound (SFX) for interactive components
+- Added an opt-in **Web Audio** UI-sound layer — "the instrument makes its own
+  sounds". No deps, no audio files: a tiny synth (`SfxEngine`) plays short,
+  low, low-pass-filtered blips shaped for the dark-console mood (warm, quiet,
+  no harsh transients). Sounds: `hover` (soft tick, pitch-jittered),
+  `tap` (two-part warm confirm), `on`/`off` (two-note cue the switch voices).
+- **`src/components/os/primitives/sound.tsx`** — `SoundProvider` + `useSound()`.
+  Delivered by **global event delegation** (capture-phase `pointerover` /
+  `pointerdown` on `document`), so every interactive/hover element is covered
+  without wiring each component. Selector = links, buttons, `summary`,
+  role=button/option/switch/menuitem/tab, focusables, `.module`; opt out with
+  `[data-no-sfx]`. Hover ticks are fine-pointer only + rate-limited (no
+  machine-gun / no touch-scroll ticks); text inputs excluded (no keystroke tick).
+- **OFF by default**, opt-in via a visible speaker toggle
+  (`primitives/SoundToggle.tsx`) added to the **StatusBar**, desktop **MenuBar**
+  tray, and a "sound" row in **Settings**. Preference persists to
+  `localStorage` (`kylevos:sound:v1`). Audio unlocks inside the enable click
+  (real user gesture → satisfies autoplay policy).
+- Mounted `SoundProvider` in `app/layout.tsx` so it spans both `/` and `/desktop`.
+- ⚠️ Note: toggle side effects live **outside** the `setEnabled` updater — a
+  setState updater must be pure (StrictMode double-invokes it in dev, which was
+  double-firing the cue + double-writing storage). `enabledRef` is updated
+  eagerly so the document listeners stay correct.
+- Verified: `npm run build` clean (types + lint); drove the real page in
+  Chromium/Playwright instrumenting Web Audio — OFF = silent, enable = one
+  2-note cue, hover onto a control = exactly one tick, single tap = one
+  two-part sound (not doubled), preference survives reload, no console errors.
+
 ### 2026-06-11 (later) — Acted on the `.impeccable` critique (32/40, 2026-06-03)
 - Source: `.impeccable/critique/2026-06-03T06-57-44Z__src-components-os-os-tsx.md`.
   Several findings were already fixed by then (OG image, hardcoded "cs student",

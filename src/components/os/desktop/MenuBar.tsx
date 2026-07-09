@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { m, useReducedMotion } from "framer-motion";
 import { EASE } from "../primitives/anim";
+import SoundToggle from "../primitives/SoundToggle";
 import { system } from "@/lib/content";
 import { PowerIcon } from "./icons";
 import { appById } from "./apps";
@@ -111,6 +112,7 @@ export default function MenuBar() {
             <span className="hidden sm:inline-flex" title="Uplink">
               <Uplink />
             </span>
+            <SoundToggle />
           </div>
 
           <span aria-hidden className="hidden h-3 w-px bg-line-strong sm:block" />

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { nav, profile, system } from "@/lib/content";
 import { useCommandBar } from "./CommandBar";
+import SoundToggle from "./primitives/SoundToggle";
 
 function useClock() {
   // null until mounted → identical server/client first render (no hydration drift).
@@ -77,6 +78,7 @@ export default function StatusBar() {
           <time className="readout hidden tabular-nums sm:block" aria-hidden>
             {time ?? "--:--:--"}
           </time>
+          <SoundToggle />
           <Link
             href="/desktop"
             aria-label="Enter the desktop"
