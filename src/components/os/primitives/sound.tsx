@@ -30,7 +30,7 @@ import {
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-type SfxName = "hover" | "tap" | "on" | "off";
+type SfxName = "hover" | "tap" | "on" | "off" | "boot" | "bootOk" | "bootInfo" | "bootDone";
 
 const STORAGE_KEY = "kylevos:sound:v1";
 
@@ -108,6 +108,64 @@ class SfxEngine {
           peak: 0.06,
           attack: 0.001,
           release: 0.07,
+        });
+        return;
+      }
+      case "boot": {
+        // A quiet data tick, one per streamed boot/transcript line — soft
+        // enough to repeat many times without becoming a machine gun.
+        this.blip(t, {
+          type: "sine",
+          freq: 900,
+          cutoff: 3000,
+          peak: 0.03,
+          attack: 0.001,
+          release: 0.03,
+        });
+        return;
+      }
+      case "bootOk": {
+        // Systemd "[  OK  ]" confirm — brighter than a plain boot tick.
+        this.blip(t, {
+          type: "triangle",
+          freq: 700,
+          cutoff: 2800,
+          peak: 0.05,
+          attack: 0.001,
+          release: 0.05,
+        });
+        return;
+      }
+      case "bootInfo": {
+        // Systemd "[ INFO ]" — same weight as bootOk, lower and softer.
+        this.blip(t, {
+          type: "sine",
+          freq: 500,
+          cutoff: 2200,
+          peak: 0.045,
+          attack: 0.001,
+          release: 0.06,
+        });
+        return;
+      }
+      case "bootDone": {
+        // "System online" signature — a warmer, longer two-note rise than
+        // the sound toggle's "on" cue.
+        this.blip(t, {
+          type: "triangle",
+          freq: 460,
+          cutoff: 2600,
+          peak: 0.09,
+          attack: 0.002,
+          release: 0.1,
+        });
+        this.blip(t + 0.08, {
+          type: "triangle",
+          freq: 660,
+          cutoff: 2600,
+          peak: 0.09,
+          attack: 0.002,
+          release: 0.14,
         });
         return;
       }
