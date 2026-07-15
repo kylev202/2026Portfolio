@@ -66,7 +66,7 @@ export const profile = {
 
 export const socials = [
   { label: "GitHub", short: "GH", href: "https://github.com/kylev202" },
-  { label: "LinkedIn", short: "IN", href: "https://www.linkedin.com/in/khiem-vu-8a0283313/" }, // TODO
+  { label: "LinkedIn", short: "IN", href: "https://www.linkedin.com/in/duy-khiem-vu-8a0283313/" }, // TODO
   { label: "Email", short: "@", href: "mailto:kylevu858@gmail.com" },
 ] as const;
 
@@ -127,16 +127,15 @@ export type Project = {
  */
 export const projects: Project[] = [
   {
-    title: "Project One",
-    year: "2025",
+    title: "Arbora",
+    year: "2026",
     description:
-      "What it is in one line. Link a live demo if you have one — recruiters click those first.",
+      "A local-first study assistant that turns lectures and PDFs into cited notes, flashcards, and spaced-repetition quizzes — everything processed on-device.",
     detail:
-      "Two or three sentences on what you actually built, the hard part, the stack decisions, and what it taught you. This text reveals when the row is expanded.",
-    tags: ["Next.js", "TypeScript", "Tailwind"],
-    status: "live",
-    repo: "https://github.com/kylev202",
-    demo: "#",
+      "A Tauri desktop app with a Rust core orchestrating a Python AI sidecar (Ollama, FAISS, Whisper) over a local SQLite store. Every generated item is grounded in the source with citations and gated behind human review before it enters a deck, and reviews are scheduled with FSRS. The hard part was keeping the whole pipeline offline and trustworthy — no data ever leaves the machine.",
+    tags: ["Tauri", "Rust", "React", "TypeScript", "Python"],
+    status: "in progress",
+    repo: "https://github.com/kylev202/Arbora",
   },
   {
     title: "Project Two",

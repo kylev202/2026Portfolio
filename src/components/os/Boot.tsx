@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { m } from "framer-motion";
 import { system } from "@/lib/content";
 import { DUR, EASE } from "./primitives/anim";
+import { useSound } from "./primitives/sound";
 
 const LINE_STAGGER = 0.24; // seconds between boot lines
 const HOLD_AFTER = 0.85; // pause on "ready" before handing off
@@ -15,6 +16,7 @@ const HOLD_AFTER = 0.85; // pause on "ready" before handing off
  */
 export default function Boot({ onDone }: { onDone: () => void }) {
   const done = useRef(false);
+  const { play } = useSound();
 
   const finish = () => {
     if (done.current) return;
@@ -34,6 +36,18 @@ export default function Boot({ onDone }: { onDone: () => void }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Voice each boot line as it reveals: a data tick per line, the "system online"
+  // signature on the last ("ready") one. Silent unless interface sound is on, and
+  // only heard where the browser lets a suspended AudioContext resume without a
+  // fresh gesture (i.e. returning visitors with sound already enabled).
+  useEffect(() => {
+    const timers = system.boot.map((_, i) => {
+      const last = i === system.boot.length - 1;
+      return window.setTimeout(() => play(last ? "bootDone" : "boot"), i * LINE_STAGGER * 1000);
+    });
+    return () => timers.forEach((id) => window.clearTimeout(id));
+  }, [play]);
 
   return (
     <m.div

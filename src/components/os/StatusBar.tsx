@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { nav, profile, system } from "@/lib/content";
+import { profile, system } from "@/lib/content";
 import { useCommandBar } from "./CommandBar";
 import SoundToggle from "./primitives/SoundToggle";
 
@@ -59,19 +59,6 @@ export default function StatusBar() {
             <span className="font-mono text-xs text-ink-dim">{profile.availableLabel}</span>
           </span>
         )}
-
-        {/* Visible section nav — recognition over recall; ⌘K stays the fast path. */}
-        <nav aria-label="Sections" className="ml-2 hidden items-center gap-4 lg:flex">
-          {nav.map((n) => (
-            <a
-              key={n.id}
-              href={`#${n.id}`}
-              className="font-mono text-xs text-ink-dim transition-colors hover:text-signal"
-            >
-              {n.label}
-            </a>
-          ))}
-        </nav>
 
         {/* Right cluster */}
         <div className="ml-auto flex items-center gap-4">

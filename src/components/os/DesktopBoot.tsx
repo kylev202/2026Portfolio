@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { m } from "framer-motion";
 import { profile, system } from "@/lib/content";
 import { DUR, EASE } from "./primitives/anim";
+import { useSound } from "./primitives/sound";
 
 /**
  * ──────────────────────────────────────────────────────────────────────────
@@ -81,6 +82,20 @@ function buildSteps(): Step[] {
 /** The transcript is deterministic, so build it once at module load. */
 const STEPS = buildSteps();
 
+/** Which boot voice announces a given line as it streams in (null = silent). */
+function sfxFor(entry: Entry): "boot" | "bootOk" | "bootInfo" | "bootDone" | null {
+  switch (entry.type) {
+    case "blank":
+      return null;
+    case "welcome":
+      return "bootDone";
+    case "unit":
+      return entry.status === "ok" ? "bootOk" : "bootInfo";
+    default:
+      return "boot"; // head / kernel / login — a data tick
+  }
+}
+
 /** The green/amber [  OK  ] / [ INFO ] status marker. */
 function Marker({ status }: { status: "ok" | "info" }) {
   const label = status === "ok" ? "  OK  " : " INFO ";
@@ -133,6 +148,7 @@ function LineRow({ entry }: { entry: Entry }) {
 
 export default function DesktopBoot({ onDone }: { onDone: () => void }) {
   const steps = STEPS;
+  const { play } = useSound();
   const [shown, setShown] = useState(0); // number of entries revealed
   const finished = useRef(false);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -153,6 +169,9 @@ export default function DesktopBoot({ onDone }: { onDone: () => void }) {
     const tick = () => {
       i += 1;
       setShown(i);
+      // Voice the line that just streamed in (silent unless sound is enabled).
+      const sfx = sfxFor(steps[i - 1].entry);
+      if (sfx) play(sfx);
       if (i >= total) {
         timer = setTimeout(finish, 650); // brief hold on "ready" before handoff
         return;
