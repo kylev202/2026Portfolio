@@ -37,7 +37,7 @@ const STORAGE_KEY = "kylevos:sound:v1";
 /* Anything you can click or that lights up on hover. Elements (or ancestors)
    carrying [data-no-sfx] opt out — used by the sound toggle, which voices its
    own on/off cue. Text inputs are intentionally excluded (no per-keystroke tick). */
-const INTERACTIVE =
+export const INTERACTIVE =
   'a[href],button:not([disabled]),summary,[role="button"],[role="option"],[role="switch"],[role="menuitem"],[role="tab"],[tabindex]:not([tabindex="-1"]),.module';
 
 type BlipSpec = {

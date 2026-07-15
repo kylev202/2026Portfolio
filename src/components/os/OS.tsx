@@ -9,6 +9,7 @@ import Hero from "./Hero";
 import Footer from "./Footer";
 import SystemBus from "./primitives/SystemBus";
 import DepthRail from "./primitives/DepthRail";
+import InteractiveGrid from "./primitives/InteractiveGrid";
 import About from "./sections/About";
 import Work from "./sections/Work";
 import Path from "./sections/Path";
@@ -48,10 +49,11 @@ export default function OS() {
 
   return (
     <LazyMotion features={domAnimation} strict>
-      {/* Deep background field — behind everything. A single static texture
-         (grain + vignette below) carries the "instrument" mood; the animated
-         scanline veil was retired to keep the desktop calm. */}
-      <div aria-hidden className="grid-dots fixed inset-0 -z-10 opacity-40" />
+      {/* Deep background field — behind everything. A live dot-grid: pointer
+         proximity warps nearby dots (magnetic) and a slow ambient pulse plus
+         click-triggered rings ping outward; falls back to the old static
+         texture under prefers-reduced-motion. */}
+      <InteractiveGrid />
 
       {/* First tab stop — lets keyboard users jump past the fixed chrome. */}
       <a href="#main" className="skip-link">
