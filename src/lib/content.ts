@@ -136,19 +136,20 @@ export const projects: Project[] = [
     tags: ["Tauri", "Rust", "React", "TypeScript", "Python"],
     status: "in progress",
     repo: "https://github.com/kylev202/Arbora",
+    demo: "https://kylev202.github.io/Arbora/",
   },
   {
-    title: "Project Two",
-    year: "2025",
+    title: "Mr FAT",
+    year: "2026",
     description:
-      "A second project showing a different skill — a backend, an API, or a data project.",
+      "A website for Hu Tieu Go Ong Map, a Vietnamese noodle house in Maidstone, Melbourne — menu, reservations, and direct online ordering. Built as a client project and sold to the business.",
     detail:
-      "Focus on the problem you solved and the trade-offs you made. Mention scale, constraints, or anything that made it non-trivial.",
-    tags: ["Python", "PostgreSQL", "REST"],
-    status: "shipped",
-    repo: "https://github.com/kylev202",
+      "The restaurant was losing margin to third-party delivery apps, so the site puts ordering on their own domain at lower prices, alongside a menu, party combos for groups, and a reservation flow for tables of three or more. It's now the business's live site.",
+    tags: ["HTML", "CSS", "PHP", "MySQL","JavaScript", "Docker"],
+    status: "Shipped",
+    demo: "https://ongmapmaidstone.com.au/",
   },
-  {
+/*  {
     title: "Project Three",
     year: "2024",
     description: "An earlier build is fine — it shows growth.",
@@ -159,6 +160,7 @@ export const projects: Project[] = [
     repo: "https://github.com/kylev202",
     demo: "#",
   },
+*/
 ];
 
 export type TimelineItem = {
